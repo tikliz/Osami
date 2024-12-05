@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1bo1vgrf2m27"]
+
+[ext_resource type="Script" path="res://scripts/drawing_script.gd" id="1_88rql"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5xcdh"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="DrawingAreaBG" type="Panel" parent="."]
+offset_left = 320.0
+offset_top = 115.0
+offset_right = 832.0
+offset_bottom = 499.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5xcdh")
+script = ExtResource("1_88rql")
+
+[node name="Line2D" type="Line2D" parent="DrawingAreaBG"]

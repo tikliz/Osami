@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=3 uid="uid://cf3j2vavqos04"]
+
+[ext_resource type="Script" path="res://DrawingCanvas/Cursor/BrushCursor/BrushCursor.gd" id="1_clrgj"]
+[ext_resource type="Shader" path="res://DrawingCanvas/Cursor/cursor.gdshader" id="1_fsquo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xh8tm"]
+shader = ExtResource("1_fsquo")
+
+[node name="BrushCursor" type="Sprite2D"]
+material = SubResource("ShaderMaterial_xh8tm")
+script = ExtResource("1_clrgj")

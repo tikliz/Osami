@@ -1,0 +1,44 @@
+[gd_scene load_steps=9 format=3 uid="uid://dhchemgrdwiwb"]
+
+[ext_resource type="Script" path="res://DrawingCanvas/DrawingCanvasGrid.gd" id="1_5cqvw"]
+[ext_resource type="Script" path="res://DrawingCanvas/DrawingCanvas.gd" id="1_gqmlf"]
+[ext_resource type="Script" path="res://DrawingCanvas/Tools/StrokeRandomizer.gd" id="2_cc82x"]
+[ext_resource type="Script" path="res://DrawingCanvas/Tools/BrushTool.gd" id="2_uhu1t"]
+[ext_resource type="Curve" uid="uid://bgd7v60kyywsk" path="res://DrawingCanvas/default_pressure_curve.tres" id="3_yn2mb"]
+[ext_resource type="PackedScene" uid="uid://cf3j2vavqos04" path="res://DrawingCanvas/Cursor/BrushCursor/BrushCursor.tscn" id="4_cpw87"]
+[ext_resource type="Shader" path="res://DrawingCanvas/Cursor/cursor.gdshader" id="6_ubtvg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nrbbn"]
+shader = ExtResource("6_ubtvg")
+
+[node name="DrawingCanvas" type="SubViewportContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gqmlf")
+
+[node name="StrokeRandomizer" type="Node" parent="."]
+script = ExtResource("2_cc82x")
+pressure_curve = ExtResource("3_yn2mb")
+
+[node name="BrushTool" type="Node" parent="."]
+script = ExtResource("2_uhu1t")
+pressure_curve = ExtResource("3_yn2mb")
+cursor_path = NodePath("../SubViewport/BrushCursor")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="Grid" type="Node2D" parent="SubViewport"]
+script = ExtResource("1_5cqvw")
+
+[node name="TargetStrokes" type="Node2D" parent="SubViewport"]
+
+[node name="BrushCursor" parent="SubViewport" instance=ExtResource("4_cpw87")]
+material = SubResource("ShaderMaterial_nrbbn")
+
+[node name="Strokes" type="Node2D" parent="SubViewport"]
