@@ -133,8 +133,8 @@ func end_stroke() -> void:
 			_strokes_parent.remove_child(_current_stroke)
 			_current_stroke.queue_free()
 		_strokes.append(_current_stroke)
-		print(_current_stroke.first)
-		print(_current_stroke.last)
+		print(_current_stroke.start)
+		print(_current_stroke.end)
 	_current_stroke = null
 
 func set_brush_size(s: int) -> void:

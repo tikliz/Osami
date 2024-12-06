@@ -38,8 +38,8 @@ func gamemode_RNG_process(delta: float) -> void:
 	if _canvas._targetStrokes.size() < 1:
 		_canvas._strokes_randomizer.generate_strokes()
 	if _canvas._targetStrokes.size() > 0 && _canvas._strokes.size() >= _canvas._targetStrokes.size():
-		#var line_diff := calculate_line_similarity(_canvas._strokes[0].data, _canvas._targetStrokes[0].data.points[0], _canvas._targetStrokes[0].data.points[1])
-		#print(line_diff)
+		var line_diff := calculate_score_straight_line(_canvas._strokes[0], _canvas._targetStrokes[0])
+		print(line_diff)
 		_canvas._active_tool.clear_prev_strokes()
 		_canvas._strokes_randomizer.clear() 
 	
@@ -75,7 +75,7 @@ func calculate_score_straight_line(line_data: BrushStroke, target_line: BrushStr
 	if !has_line_completed(line_data, target_line): return 0
 	var points = line_data.data
 	# calculate sum of all points to target distances multiplicated by the weight
-	var sum = 0
+	var sum = 0.0
 	for i in range(points.size() - 1):
 		#var point_data = line_data[i]
 		#var point_data_next = line_data[i + 1]
@@ -83,10 +83,10 @@ func calculate_score_straight_line(line_data: BrushStroke, target_line: BrushStr
 		sum += line_min_distance(points[i].pos, target_line) * weight
 
 	# Last point edge case
-	sum += line_min_distance(points[points.size()].pos, target_line) * (points[points.size()].pos - points[points.size() - 1].pos)
+	sum += line_min_distance(points[-1].pos, target_line) * (points[-1].pos - points[-2].pos).length()
 
 	# calculate total weigth for the the line average, in order to normalize the score 
-	var time_delta = (points[points.size()] - points[0] );
+	var time_delta = (points[-1].timestamp - points[0].timestamp);
 	
 	return sum / time_delta
 
@@ -126,7 +126,7 @@ func has_line_completed(line_data: BrushStroke, target_line: BrushStroke, tolera
 		distance_start_min = min(distance_start_min, line_min_distance(point.pos, target_line))
 		distance_end_min = min(distance_end_min, line_min_distance(point.pos, target_line))
 	
-	return target_line.end < tolerance && target_line.start < tolerance
+	return distance_start_min < tolerance && distance_end_min < tolerance
 
 
 # 1 approach if the target curve is an Array[Types.StrokeData]
