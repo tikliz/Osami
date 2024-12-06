@@ -1,7 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://b8lufwcldklm0"]
+[gd_scene load_steps=5 format=3 uid="uid://b8lufwcldklm0"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_rpxpb"]
 [ext_resource type="PackedScene" uid="uid://dhchemgrdwiwb" path="res://DrawingCanvas/drawing_canvas.tscn" id="2_chtgh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hd4ry"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.101961, 0.101961, 0.101961, 0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="Theme" id="Theme_merwd"]
+Panel/styles/panel = SubResource("StyleBoxFlat_hd4ry")
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -16,14 +31,21 @@ script = ExtResource("1_rpxpb")
 [node name="DrawingCanvas" parent="." instance=ExtResource("2_chtgh")]
 layout_mode = 1
 
-[node name="ScoreLabel" type="Label" parent="."]
-layout_mode = 0
-offset_right = 176.0
-offset_bottom = 65.0
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+theme = SubResource("Theme_merwd")
 
-[node name="StrokeLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 847.0
-offset_right = 408.0
-offset_bottom = 921.0
+[node name="ScoreLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_top = 10.0
+offset_right = -12.0
+offset_bottom = 33.0
+grow_horizontal = 0

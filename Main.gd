@@ -38,39 +38,23 @@ func gamemode_RNG_process(delta: float) -> void:
 	if _canvas._targetStrokes.size() < 1:
 		_canvas._strokes_randomizer.generate_strokes()
 	if _canvas._targetStrokes.size() > 0 && _canvas._strokes.size() >= _canvas._targetStrokes.size():
-		$StrokeLabel.text = str(_canvas._strokes[0]._to_string())
-		print(_canvas._strokes[0]._to_string())
-		var line_diff := calculate_score_straight_line(_canvas._strokes[0], _canvas._targetStrokes[0])
-		$ScoreLabel.text = str(line_diff)
-		print(line_diff)
+		var line_diff := score_rounding(_canvas._strokes[0], _canvas._targetStrokes[0])
+		$Panel/ScoreLabel.text = str(line_diff)
+		if !has_line_completed(_canvas._strokes[0], _canvas._targetStrokes[0], 0.20):
+			_canvas._active_tool.clear_prev_strokes()
+			$Panel/ScoreLabel.modulate = Color.DARK_RED
+			return
+		$Panel/ScoreLabel.modulate = Color.WHITE
 		_canvas._active_tool.clear_prev_strokes()
-		_canvas._strokes_randomizer.clear() 
-	
+		_canvas._strokes_randomizer.clear()
+
+func score_rounding(stroke: BrushStroke, target: BrushStroke) -> String:
+	return "Precision: %.2f" % [100 - clampf(calculate_score_straight_line(stroke, target) * 8, 0, 100)]
 
 func log_strokes(s: Array[BrushStroke]) -> void:
 	for stroke in s:
 		for i in range(stroke.data.size() - 1):
 			print("Pos: %s, pressure: %.2f, timestamp: %d, timedelta: %d, distance: %.2f " % [stroke.data[i].pos, stroke.data[i].pressure, stroke.data[i].timestamp, stroke.data[i + 1].timestamp - stroke.data[i].timestamp, distance(stroke.data[i].pos, stroke.data[i + 1].pos)])
-
-func calculate_line_similarity(hand_drawn: Array[Vector2], line_start: Vector2, line_end: Vector2) -> float:
-	var total_distance = 0.0
-	var count = hand_drawn.size()
-	if hand_drawn[0] - line_start < hand_drawn[0] - line_end:
-		var temp_line_start = line_start
-		line_start = line_end
-		line_end = temp_line_start
-	
-	for point in hand_drawn:
-		var distance = abs(
-			(line_end.y - line_start.y) * point.x 
-			- (line_end.x - line_start.x) * point.y 
-			+ line_end.x * line_start.y 
-			- line_end.y * line_start.x
-		) / sqrt(pow(line_end.y - line_start.y, 2) + pow(line_end.x - line_start.x, 2))
-		total_distance += distance
-	
-	return total_distance / count  # Return the average distance
-
 
 # calculate the distance between two points
 func distance(point1: Vector2, point2: Vector2) -> float:
@@ -80,7 +64,6 @@ func distance(point1: Vector2, point2: Vector2) -> float:
 func calculate_score_straight_line(line_data: BrushStroke, target_line: BrushStroke) -> float:
 	
 	# check if the line is completed before calculating anything
-	#if !has_line_completed(line_data, target_line): return 0
 	var points = line_data.data
 	# calculate sum of all points to target distances multiplicated by the weight
 	var sum = 0.0
@@ -93,7 +76,7 @@ func calculate_score_straight_line(line_data: BrushStroke, target_line: BrushStr
 		var weight = distance(points[i + 1].pos, points[i].pos) / point_time_delta
 		sum += line_min_distance(points[i].pos, target_line) * weight
 		weight_sum += weight
-		print("min_dist: %.f, distance: %.f, sum: %d, weighted_sum: %d " % [line_min_distance(points[i].pos, target_line),distance(points[i + 1].pos, points[i].pos), sum, weight_sum])
+		#print("min_dist: %.f, distance: %.f, sum: %d, weighted_sum: %d " % [line_min_distance(points[i].pos, target_line),distance(points[i + 1].pos, points[i].pos), sum, weight_sum])
 
 	# Last point edge case
 	#sum += line_min_distance(points[-1].pos, target_line) * (points[-1].pos - points[-2].pos).length() * 
@@ -162,16 +145,16 @@ func to_degrees(angle: float) -> float:
 
 # function to check if the line is completed sucefully 
 # for osu calculations i have no idea how to make this
-func has_line_completed(line_data: BrushStroke, target_line: BrushStroke, tolerance: int = 25) -> bool:
-	var distance_start_min = 9223372036854775807
-	var distance_end_min = 9223372036854775807
-	
+func has_line_completed(line_data: BrushStroke, target_line: BrushStroke, tolerance: float = 0.20) -> bool:
+	var distance_start_min = INF
+	var distance_end_min = INF
+	var target_dist = distance(target_line.start, target_line.end) * tolerance
 	# calculate the distance of all points distances to the start and end of target line
 	for point in line_data.data:
-		distance_start_min = min(distance_start_min, line_min_distance(point.pos, target_line))
-		distance_end_min = min(distance_end_min, line_min_distance(point.pos, target_line))
-	
-	return distance_start_min < tolerance && distance_end_min < tolerance
+		distance_start_min = min(distance_start_min, distance(point.pos, target_line.start))
+		distance_end_min = min(distance_end_min, distance(point.pos, target_line.end))
+
+	return distance_start_min < target_dist && distance_end_min < target_dist
 
 
 # 1 approach if the target curve is an Array[Types.StrokeData]
