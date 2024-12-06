@@ -26,9 +26,11 @@ func generate_strokes(point_count: int = 2, line_type: Types.LineType = Types.Li
 		var new_point: Vector2
 		match line_type:
 			Types.LineType.STRAIGHT:
-				new_point = prev_point + Vector2(randi_range(-200, 200), randi_range(-200, 200))
+				new_point = prev_point + Vector2(randi_range(-1000, 1000), randi_range(-1000, 1000))
 		
-		new_point = new_point.clamp(Vector2.ZERO, _canvas.size)
+		print(new_point)
+		new_point = new_point.clamp(Vector2.ZERO + Vector2(90, 90), _canvas._viewport.size - Vector2i(90, 0))
+		print(new_point)
 		_current_stroke.add_point(new_point, randf_range(0, 1.0))
 		prev_point = new_point
 	end_stroke()

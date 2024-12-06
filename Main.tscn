@@ -37,6 +37,7 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
+mouse_filter = 2
 theme = SubResource("Theme_merwd")
 
 [node name="ScoreLabel" type="Label" parent="Panel"]
