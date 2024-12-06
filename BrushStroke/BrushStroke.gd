@@ -43,7 +43,13 @@ func _ready() -> void:
 # -------------------------------------------------------------------------------------------------
 func _to_string() -> String:
 	return "Color: %s, Size: %d, Points: %s" % [color, size, data.size()]
-
+	
+#class StrokePoint:
+	#var pos: Vector2
+	#var pressure: float
+	#var timestamp: int
+func _data_to_string(dataC: Types.StrokePoint) -> String:
+	return "Pos: %s, pressure: %.2f, timestamp: %d" % [dataC.pos, dataC.pressure, dataC.timestamp]
 # -------------------------------------------------------------------------------------------------
 func add_point(point: Vector2, pressure: float, timestamp: int = Time.get_ticks_msec()) -> void:
 	# Smooth out pressure values (on Linux i sometimes get really high pressure spikes)

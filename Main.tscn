@@ -15,3 +15,15 @@ script = ExtResource("1_rpxpb")
 
 [node name="DrawingCanvas" parent="." instance=ExtResource("2_chtgh")]
 layout_mode = 1
+
+[node name="ScoreLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 176.0
+offset_bottom = 65.0
+
+[node name="StrokeLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 847.0
+offset_right = 408.0
+offset_bottom = 921.0
