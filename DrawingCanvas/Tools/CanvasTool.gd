@@ -53,7 +53,6 @@ func get_current_brush_stroke() -> BrushStroke:
 
 # -------------------------------------------------------------------------------------------------
 func start_stroke() -> void:
-	print("STROKE START")
 	_canvas.start_stroke()
 	performing_stroke = true
 
@@ -63,7 +62,6 @@ func add_stroke_point(point: Vector2, pressure: float = 1.0) -> void:
 
 # -------------------------------------------------------------------------------------------------
 func end_stroke() -> void:
-	print("STROKE END")
 	_canvas.end_stroke()
 	performing_stroke = false
 

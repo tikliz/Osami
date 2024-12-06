@@ -60,7 +60,7 @@ func _process(delta: float) -> void:
 		
 		# If the brush stroke gets too long, we make a new one. This is necessary because Godot limits the number
 		# of indices in a Line2D/Polygon
-		if get_current_brush_stroke().points.size() >= BrushStroke.MAX_POINTS:
+		if get_current_brush_stroke().data.size() >= BrushStroke.MAX_POINTS:
 			end_stroke()
 			start_stroke()
 			add_stroke_point(pos, point_pressure)
@@ -70,18 +70,18 @@ func _process(delta: float) -> void:
 func _is_stroke_a_dot() -> bool:
 	var stroke := get_current_brush_stroke()
 	
-	if stroke.points.size() < 2:
+	if stroke.data.size() < 2:
 		return true
 	
-	if stroke.points.size() == 2:
-		var dist := stroke.points[0].distance_to(stroke.points[1])
+	if stroke.data.size() == 2:
+		var dist := stroke.data[0].pos.distance_to(stroke.data[1].pos)
 		if dist <= DOT_MAX_DISTANCE_THRESHOLD:
 			return true
 	
-	if stroke.points.size() <= 6:
+	if stroke.data.size() <= 6:
 		var dist := 0.0
-		for i in stroke.points.size() - 1:
-			dist += stroke.points[i].distance_to(stroke.points[i + 1])
+		for i in stroke.data.size() - 1:
+			dist += stroke.data[i].pos.distance_to(stroke.data[i + 1].pos)
 		if dist <= DOT_MAX_DISTANCE_THRESHOLD:
 			return true
 				

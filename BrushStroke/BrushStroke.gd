@@ -17,8 +17,11 @@ const MIN_VECTOR2 := -MAX_VECTOR2
 
 var color: Color: get = get_color, set = set_color
 var size: int
-var points: Array[Vector2]
-var pressures: Array[float]
+var data: Array[Types.StrokePoint] = []
+var last: 
+	get: return data.front().pos
+var first: 
+	get: return data.back().pos
 
 # ------------------------------------------------------------------------------------------------
 func _ready() -> void:
@@ -39,34 +42,35 @@ func _ready() -> void:
 
 # -------------------------------------------------------------------------------------------------
 func _to_string() -> String:
-	return "Color: %s, Size: %d, Points: %s" % [color, size, points]
+	return "Color: %s, Size: %d, Points: %s" % [color, size, data.size()]
 
 # -------------------------------------------------------------------------------------------------
-func add_point(point: Vector2, pressure: float) -> void:
+func add_point(point: Vector2, pressure: float, timestamp: int = Time.get_ticks_msec()) -> void:
 	# Smooth out pressure values (on Linux i sometimes get really high pressure spikes)
-	if !pressures.is_empty():
-		var last_pressure: float = pressures.back()
+	if !data.is_empty():
+		var last_pressure: float = data.back().pressure
 		var pressure_diff := pressure - last_pressure
 		if abs(pressure_diff) > MAX_PRESSURE_DIFF:
 			pressure = last_pressure + sign(pressure_diff) * MAX_PRESSURE_DIFF
 	pressure = clamp(pressure, MIN_PRESSURE_VALUE, MAX_PRESSURE_VALUE)
 	
-	points.append(point)
-	pressures.append(pressure)
+	var stroke_point := Types.StrokePoint.new()
+	stroke_point.pos = point
+	stroke_point.pressure = pressure
+	stroke_point.timestamp = timestamp
+	data.append(stroke_point)
 
 # ------------------------------------------------------------------------------------------------
 func remove_last_point() -> void:
-	if !points.is_empty():
-		points.pop_back()
-		pressures.pop_back()
+	if !data.is_empty():
+		data.pop_back()
 		_line2d.points.remove_at(_line2d.points.size() - 1)
 		_line2d.width_curve.remove_point(_line2d.width_curve.get_point_count() - 1)
 
 # ------------------------------------------------------------------------------------------------
 func remove_all_points() -> void:
-	if !points.is_empty():
-		points.clear()
-		pressures.clear()
+	if !data.is_empty():
+		data.clear()
 		_line2d.points = PackedVector2Array()
 		_line2d.width_curve.clear_points()
 
@@ -75,18 +79,18 @@ func refresh() -> void:
 	_line2d.clear_points()
 	_line2d.width_curve.clear_points()
 	
-	if points.is_empty():
+	if data.is_empty():
 		return
 	
 	_line2d.default_color = color
 	_line2d.width = size
 	
 	var p_idx := 0
-	var curve_step: float = 1.0 / pressures.size()
-	for point: Vector2 in points:
+	var curve_step: float = 1.0 / data.size()
+	for point in data:
 		# Add the point
-		_line2d.add_point(point)
-		var pressure: float = pressures[p_idx]
+		_line2d.add_point(point.pos)
+		var pressure: float = point.pressure
 		_line2d.width_curve.add_point(Vector2(curve_step * p_idx, pressure / MAX_PRESSURE_VALUE))
 		p_idx += 1
 		
@@ -103,7 +107,6 @@ func get_color() -> Color:
 
 # -------------------------------------------------------------------------------------------------
 func clear() -> void:
-	points.clear()
-	pressures.clear()
+	data.clear()
 	_line2d.clear_points()
 	_line2d.width_curve.clear_points()

@@ -41,17 +41,14 @@ func start_stroke(s: int = _canvas._brush_size, c: Color = _canvas._brush_color)
 
 func end_stroke() -> void:
 	if _current_stroke != null:
-		var points: Array = _current_stroke.points
-		if points.size() <= 1 || (points.size() == 2 && points.front().is_equal_approx(points.back())):
+		var points: Array = _current_stroke.data
+		if points.size() <= 1 || (points.size() == 2 && points.front().pos.is_equal_approx(points.back().pos)):
 			_canvas._target_strokes_parent.add_child(_current_stroke)
 			_current_stroke.queue_free()
 			_current_stroke = null
 			return
 	_canvas._target_strokes_parent.add_child(_current_stroke)
 	_canvas._targetStrokes.append(_current_stroke)
-	for stroke in _canvas._targetStrokes:
-		print(stroke.to_string())
-	print("---------")
 	_current_stroke = null
 
 func clear() -> void:

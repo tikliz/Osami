@@ -26,3 +26,8 @@ enum LineType {
 enum Gamemode {
 	RNG_LINES,
 }
+
+class StrokePoint:
+	var pos: Vector2
+	var pressure: float
+	var timestamp: int
