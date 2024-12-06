@@ -129,7 +129,7 @@ func start_stroke() -> void:
 func end_stroke() -> void:
 	if _current_stroke != null:
 		var points: Array = _current_stroke.data
-		if points.size() <= 1 || (points.size() == 2 && points.front().is_equal_approx(points.back())):
+		if points.size() <= 1 || (points.size() == 2 && points.front().pos.is_equal_approx(points.back().pos)):
 			_strokes_parent.remove_child(_current_stroke)
 			_current_stroke.queue_free()
 		_strokes.append(_current_stroke)
