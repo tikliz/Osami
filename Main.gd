@@ -6,8 +6,8 @@ var gamemode = Types.Gamemode.RNG_LINES
 func _ready() -> void:
 	get_window().title = "Ōsami"
 	
-	seed(1)
-	#randomize()
+	#seed(1)
+	randomize()
 	
 	# Set tablet driver
 	#var driver: String = Settings.get_value(Settings.GENERAL_TABLET_DRIVER, DisplayServer.tablet_get_current_driver())
