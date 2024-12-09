@@ -18,6 +18,7 @@ class CanvasInfo:
 	var current_pressure: float
 
 enum LineType {
+	RANDOM,
 	STRAIGHT,
 	BEZIER,
 	CIRCLE

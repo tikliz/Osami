@@ -18,6 +18,7 @@ const MIN_VECTOR2 := -MAX_VECTOR2
 var color: Color: get = get_color, set = set_color
 var size: int
 var data: Array[Types.StrokePoint] = []
+var _line_form: Types.LineType
 var end: 
 	get: return data.front().pos
 var start: 
